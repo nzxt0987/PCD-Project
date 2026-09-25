@@ -14,7 +14,6 @@ from PIL import Image, ImageTk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
 # SCI-FI THEME
 ctk.set_appearance_mode("dark")
 
@@ -40,7 +39,6 @@ BORDER = "#12343B"
 # PANEL COLOR
 PANEL_BG = "#080D12"
 PANEL_INNER = "#050A0E"
-
 
 class ColorSpaceApp:
     def __init__(self, root):
@@ -175,9 +173,7 @@ class ColorSpaceApp:
         self.create_footer()
         self.show_overview()
 
-    # ==========================================
     # HEADER
-    # ==========================================
     def create_header(self):
         """Membuat Header Utama Pada Area Konten."""
 
@@ -293,9 +289,7 @@ class ColorSpaceApp:
         )
         self.root.after(1000, self.start_clock)
 
-    # ==========================================
     # SIDEBAR
-    # ==========================================
     def create_sidebar(self):
         self.sidebar = ctk.CTkFrame(
             self.root,
@@ -534,9 +528,7 @@ class ColorSpaceApp:
             page_name
         ] = button
 
-    # ==========================================
     # OVERVIEW PAGE
-    # ==========================================
     def create_overview_page(self):
         """Membuat halaman Overview sebagai workspace utama."""
 
@@ -556,11 +548,12 @@ class ColorSpaceApp:
         left_col = ctk.CTkFrame(page, fg_color="transparent")
         left_col.grid(row=0, column=0, sticky="nsew", padx=(14, 6), pady=(8, 8))
 
-        left_col.grid_rowconfigure(0, weight=0)  # section title row
-        left_col.grid_rowconfigure(1, weight=1)  # images row
-        left_col.grid_rowconfigure(2, weight=0)  # transform panel
-        left_col.grid_rowconfigure(3, weight=0)  # logic operations panel
-        left_col.grid_rowconfigure(4, weight=0)  # adjustment panel
+        left_col.grid_rowconfigure(0, weight=0)
+        left_col.grid_rowconfigure(1, weight=1)
+        left_col.grid_rowconfigure(2, weight=0)
+        left_col.grid_rowconfigure(3, weight=0)
+        left_col.grid_rowconfigure(4, weight=0)
+        left_col.grid_rowconfigure(5, weight=0)
         left_col.grid_columnconfigure(0, weight=1)
 
         # Section title bar
@@ -1052,7 +1045,153 @@ class ColorSpaceApp:
             pady=6
         )
 
-        # ---- ADJUSTMENT PANEL ----
+        # Arithmetic operations panel
+        arithmetic_panel = ctk.CTkFrame(
+            left_col,
+            fg_color=PANEL_BG,
+            border_width=1,
+            border_color=BORDER,
+            corner_radius=8,
+            height=44
+        )
+        arithmetic_panel.grid(
+            row=4,
+            column=0,
+            sticky="ew",
+            padx=6,
+            pady=(0, 4)
+        )
+        arithmetic_panel.pack_propagate(False)
+
+        ctk.CTkLabel(
+            arithmetic_panel,
+            text="ARITHMETIC",
+            font=ctk.CTkFont(
+                family="Consolas",
+                size=9,
+                weight="bold"
+            ),
+            text_color=CYAN
+        ).pack(
+            side="left",
+            padx=(12, 8),
+            pady=6
+        )
+
+        self.arithmetic_mode_combo = ctk.CTkComboBox(
+            arithmetic_panel,
+            values=["ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "BLEND"],
+            width=105,
+            height=28,
+            corner_radius=5,
+            border_width=1,
+            border_color=BORDER,
+            button_color="#0A2027",
+            button_hover_color="#10333C",
+            fg_color=PANEL_INNER,
+            text_color=TEXT,
+            dropdown_fg_color=PANEL_BG,
+            dropdown_hover_color="#0C252C",
+            dropdown_text_color=TEXT,
+            font=ctk.CTkFont(
+                family="Consolas",
+                size=9
+            ),
+            state="readonly"
+        )
+        self.arithmetic_mode_combo.pack(
+            side="left",
+            padx=(0, 6),
+            pady=6
+        )
+        self.arithmetic_mode_combo.set("ADD")
+
+        ctk.CTkLabel(
+            arithmetic_panel,
+            text="α",
+            font=ctk.CTkFont(
+                family="Consolas",
+                size=9,
+                weight="bold"
+            ),
+            text_color=TEXT_MUTED
+        ).pack(
+            side="left",
+            pady=6
+        )
+
+        self.blend_alpha_value = ctk.CTkLabel(
+            arithmetic_panel,
+            text="0.50",
+            width=32,
+            font=ctk.CTkFont(
+                family="Consolas",
+                size=8
+            ),
+            text_color=TEXT
+        )
+        self.blend_alpha_value.pack(
+            side="left",
+            pady=6
+        )
+
+        self.arithmetic_alpha_slider = ctk.CTkSlider(
+            arithmetic_panel,
+            from_=0.0,
+            to=1.0,
+            number_of_steps=100,
+            width=80,
+            height=14,
+            button_length=8,
+            fg_color="#0A1A1F",
+            progress_color=CYAN_DIM,
+            button_color=CYAN,
+            button_hover_color=CYAN_BRIGHT,
+            command=self.update_alpha_label
+        )
+        self.arithmetic_alpha_slider.set(0.5)
+        self.arithmetic_alpha_slider.pack(
+            side="left",
+            padx=(0, 8),
+            pady=6
+        )
+
+        ctk.CTkButton(
+            arithmetic_panel,
+            text="▶ APPLY",
+            width=75,
+            height=28,
+            corner_radius=5,
+            fg_color="#0A333C",
+            hover_color="#104D5B",
+            text_color=TEXT,
+            font=ctk.CTkFont(
+                family="Consolas",
+                size=9,
+                weight="bold"
+            ),
+            command=self.apply_arithmetic_operation
+        ).pack(
+            side="left",
+            pady=6
+        )
+
+        self.arithmetic_status_label = ctk.CTkLabel(
+            arithmetic_panel,
+            text="Img1 op Img2 → Result",
+            font=ctk.CTkFont(
+                family="Consolas",
+                size=8
+            ),
+            text_color=TEXT_DARK
+        )
+        self.arithmetic_status_label.pack(
+            side="left",
+            padx=(8, 0),
+            pady=6
+        )
+
+        # Adjustment panel
         adjustment_panel = ctk.CTkFrame(
             left_col,
             fg_color=PANEL_BG,
@@ -1062,7 +1201,7 @@ class ColorSpaceApp:
             height=44
         )
         adjustment_panel.grid(
-            row=4,
+            row=5,
             column=0,
             sticky="ew",
             padx=6,
@@ -1423,12 +1562,9 @@ class ColorSpaceApp:
             text_color=TEXT_DARK
         ).pack(expand=True)
 
-        # Initialize button states
         self.update_action_buttons()
 
-    # ==========================================
     # ANALYSIS PAGE
-    # ==========================================
     def create_analysis_page(self):
         """Membuat Halaman Analysis."""
 
@@ -1661,9 +1797,7 @@ class ColorSpaceApp:
             expand=True
         )
 
-    # ==========================================
     # FOOTER
-    # ==========================================
     def create_footer(self):
         """Membuat Footer."""
 
@@ -1726,9 +1860,7 @@ class ColorSpaceApp:
             padx=14
         )
 
-    # ==========================================
     # HISTOGRAM RENDERING
-    # ==========================================
     def _render_histogram(self, target_area, mode="RGB", figsize=(3.0, 1.8)):
         """Render histogram ke target area yang diberikan."""
         img = self.result_img if self.result_img is not None else self.cv_img
@@ -1860,9 +1992,7 @@ class ColorSpaceApp:
         self.update_overview_histogram()
         self.update_analysis_histogram()
 
-    # ==========================================
     # ANALYSIS FUNCTIONS
-    # ==========================================
     def update_analysis(self):
         """Memperbarui informasi dan histogram gambar."""
 
@@ -1984,9 +2114,7 @@ class ColorSpaceApp:
             text_color=TEXT
         )
 
-    # ==========================================
     # ADJUSTMENT
-    # ==========================================
     def preview_adjustment(self, value=None):
         """Memperbarui preview brightness dan contrast secara real-time."""
 
@@ -2009,11 +2137,20 @@ class ColorSpaceApp:
         if source is None:
             source = self.cv_img
 
-        adjusted = cv2.convertScaleAbs(
-            source,
-            alpha=contrast,
-            beta=brightness
-        )
+        # Contrast adjustment (separate from brightness)
+        if contrast != 1.0:
+            target = cv2.convertScaleAbs(source, alpha=contrast, beta=0)
+        else:
+            target = source
+
+        # Brightness adjustment using cv2.add() per assignment requirement:
+        # cv2.add(self.cv_img, np.array([slider_value]))
+        slider_value = float(brightness)
+        if len(target.shape) == 3 and target.shape[2] > 1:
+            val_arr = np.array([slider_value] * target.shape[2], dtype=np.float64)
+        else:
+            val_arr = np.array([slider_value])
+        adjusted = cv2.add(target, val_arr)
 
         self.adjusted_img = adjusted
         self.result_img = adjusted
@@ -2037,7 +2174,6 @@ class ColorSpaceApp:
             f"Preview Adjustment : Brightness {brightness:+d} | Contrast {contrast:.1f}"
         )
 
-        # Update histograms during preview
         self.update_overview_histogram()
 
     def apply_adjustment(self):
@@ -2058,11 +2194,20 @@ class ColorSpaceApp:
         if source is None:
             source = self.cv_img
 
-        adjusted = cv2.convertScaleAbs(
-            source,
-            alpha=contrast,
-            beta=brightness
-        )
+        # Contrast adjustment (separate from brightness)
+        if contrast != 1.0:
+            target = cv2.convertScaleAbs(source, alpha=contrast, beta=0)
+        else:
+            target = source
+
+        # Brightness adjustment using cv2.add() per assignment requirement:
+        # cv2.add(self.cv_img, np.array([slider_value]))
+        slider_value = float(brightness)
+        if len(target.shape) == 3 and target.shape[2] > 1:
+            val_arr = np.array([slider_value] * target.shape[2], dtype=np.float64)
+        else:
+            val_arr = np.array([slider_value])
+        adjusted = cv2.add(target, val_arr)
 
         self.adjusted_img = adjusted
         self.result_img = adjusted
@@ -2132,9 +2277,7 @@ class ColorSpaceApp:
 
         self.update_all_histograms()
 
-    # ==========================================
     # SAVE
-    # ==========================================
     def save_result(self):
         """Menyimpan hasil transformasi atau adjustment."""
 
@@ -2177,9 +2320,7 @@ class ColorSpaceApp:
                 "Hasil gambar gagal disimpan."
             )
 
-    # ==========================================
     # PAGE NAVIGATION
-    # ==========================================
     def show_page(
         self,
         page_name
@@ -2221,9 +2362,7 @@ class ColorSpaceApp:
         if self.cv_img is not None:
             self.update_analysis()
 
-    # ==========================================
     # BUTTON STATE MANAGEMENT
-    # ==========================================
     def update_action_buttons(self):
         """Mengatur status tombol sesuai kondisi workspace."""
 
@@ -2243,9 +2382,7 @@ class ColorSpaceApp:
             state="normal" if has_image_2 else "disabled"
         )
 
-    # ==========================================
     # LOAD IMAGE
-    # ==========================================
     def load_image(self):
 
         file_path = filedialog.askopenfilename(
@@ -2293,7 +2430,6 @@ class ColorSpaceApp:
             f"Citra dimuat : {os.path.basename(file_path)}"
         )
 
-        # Update image information
         height, width = image.shape[:2]
         channels = image.shape[2] if len(image.shape) == 3 else 1
 
@@ -2352,7 +2488,6 @@ class ColorSpaceApp:
             text="No transformation"
         )
 
-        # Reset adjustments
         self.brightness_slider.set(0)
         self.contrast_slider.set(1.0)
         self.brightness_value.configure(text="0")
@@ -2361,9 +2496,7 @@ class ColorSpaceApp:
         self.update_action_buttons()
         self.update_all_histograms()
 
-    # ==========================================
     # CLEAR IMAGE
-    # ==========================================
     def clear_image(self):
         """Menghapus gambar yang sedang aktif dari workspace (tidak menghapus file dari disk)."""
 
@@ -2413,14 +2546,12 @@ class ColorSpaceApp:
             text="No image loaded."
         )
 
-        # Clear histograms
         for widget in self.histogram_area.winfo_children():
             widget.destroy()
 
         for widget in self.overview_histogram_area.winfo_children():
             widget.destroy()
 
-        # Add placeholder text back
         ctk.CTkLabel(
             self.overview_histogram_area,
             text="Load an image to generate histogram.",
@@ -2443,9 +2574,12 @@ class ColorSpaceApp:
             text_color=TEXT_MUTED
         )
 
-        # Reset logic status label
         self.logic_status_label.configure(
             text="Img1 ⊕ Img2 → Result",
+            text_color=TEXT_DARK
+        )
+        self.arithmetic_status_label.configure(
+            text="Img1 op Img2 → Result",
             text_color=TEXT_DARK
         )
 
@@ -2455,9 +2589,7 @@ class ColorSpaceApp:
             "Ready - No image loaded"
         )
 
-    # ==========================================
     # LOAD IMAGE 2
-    # ==========================================
     def load_image_2(self):
         """Memuat citra kedua untuk operasi logika/bitwise."""
 
@@ -2484,13 +2616,11 @@ class ColorSpaceApp:
         self.cv_img_2 = image
         self.image_path_2 = file_path
 
-        # Render Image 2 preview
         self.render_label(
             self.cv_img_2,
             self.lbl_img2_overview
         )
 
-        # Update Image 2 info beneath preview
         h2, w2 = image.shape[:2]
         ch2 = image.shape[2] if len(image.shape) == 3 else 1
         _, ext2 = os.path.splitext(file_path)
@@ -2510,7 +2640,6 @@ class ColorSpaceApp:
             text=f"{w2} × {h2}  |  {fmt2}  |  {file_size_str_2}"
         )
 
-        # Update right-column Image 2 info
         ch_label_2 = f"{ch2} (BGR)" if ch2 == 3 else "1 (Gray)"
         self.overview_info_2.configure(
             text=(
@@ -2523,7 +2652,7 @@ class ColorSpaceApp:
         )
 
         self.overview_status.configure(
-            text="Image 2 loaded. Ready for logic operation."
+            text="Image 2 loaded. Ready for logic or arithmetic operation."
         )
 
         self.status_var.set(
@@ -2532,9 +2661,7 @@ class ColorSpaceApp:
 
         self.update_action_buttons()
 
-    # ==========================================
     # CLEAR IMAGE 2
-    # ==========================================
     def clear_image_2(self):
         """Menghapus citra kedua dari workspace (tidak menghapus file dari disk)."""
 
@@ -2557,9 +2684,12 @@ class ColorSpaceApp:
             text="Image 2 removed."
         )
 
-        # Reset logic status label
         self.logic_status_label.configure(
             text="Img1 ⊕ Img2 → Result",
+            text_color=TEXT_DARK
+        )
+        self.arithmetic_status_label.configure(
+            text="Img1 op Img2 → Result",
             text_color=TEXT_DARK
         )
 
@@ -2569,15 +2699,12 @@ class ColorSpaceApp:
 
         self.update_action_buttons()
 
-    # ==========================================
     # LOGIC / BITWISE OPERATIONS
-    # ==========================================
     def apply_logic_operation(self):
         """Menerapkan operasi logika/bitwise pada citra."""
 
         operation = self.logic_mode_combo.get()
 
-        # --- Validate Image 1 ---
         if self.cv_img is None:
             messagebox.showwarning(
                 "Peringatan",
@@ -2585,7 +2712,6 @@ class ColorSpaceApp:
             )
             return
 
-        # --- NOT only needs Image 1 ---
         if operation == "NOT":
             try:
                 result = cv2.bitwise_not(self.cv_img)
@@ -2600,7 +2726,6 @@ class ColorSpaceApp:
             self.adjusted_img = None
             self.result_img = result.copy()
 
-            # Reset adjustment sliders
             self.brightness_slider.set(0)
             self.contrast_slider.set(1.0)
             self.brightness_value.configure(text="0")
@@ -2629,6 +2754,10 @@ class ColorSpaceApp:
                 text=f"✔ {operation} applied",
                 text_color=GREEN
             )
+            self.arithmetic_status_label.configure(
+                text="Img1 op Img2 → Result",
+                text_color=TEXT_DARK
+            )
 
             self.status_var.set(
                 f"Logic Operation : {operation}"
@@ -2638,7 +2767,6 @@ class ColorSpaceApp:
             self.update_all_histograms()
             return
 
-        # --- AND / OR / XOR need Image 2 ---
         if self.cv_img_2 is None:
             messagebox.showwarning(
                 "Peringatan",
@@ -2681,7 +2809,6 @@ class ColorSpaceApp:
             if img1.dtype != img2.dtype:
                 img2 = img2.astype(img1.dtype)
 
-            # --- Apply bitwise operation ---
             if operation == "AND":
                 result = cv2.bitwise_and(img1, img2)
             elif operation == "OR":
@@ -2706,7 +2833,6 @@ class ColorSpaceApp:
         self.adjusted_img = None
         self.result_img = result.copy()
 
-        # Reset adjustment sliders
         self.brightness_slider.set(0)
         self.contrast_slider.set(1.0)
         self.brightness_value.configure(text="0")
@@ -2735,6 +2861,10 @@ class ColorSpaceApp:
             text=f"✔ {operation} applied",
             text_color=GREEN
         )
+        self.arithmetic_status_label.configure(
+            text="Img1 op Img2 → Result",
+            text_color=TEXT_DARK
+        )
 
         self.status_var.set(
             f"Logic Operation : {operation}{resized_note}"
@@ -2743,9 +2873,139 @@ class ColorSpaceApp:
         self.update_action_buttons()
         self.update_all_histograms()
 
-    # ==========================================
     # COLOR TRANSFORMATION
-    # ==========================================
+
+    def update_alpha_label(self, val):
+        self.blend_alpha_value.configure(text=f"{float(val):.2f}")
+
+    def apply_arithmetic_operation(self):
+        """Menerapkan operasi aritmatika (ADD, SUBTRACT, MULTIPLY, DIVIDE, BLEND) pada citra."""
+        operation = self.arithmetic_mode_combo.get()
+
+        if self.cv_img is None:
+            messagebox.showwarning(
+                "Peringatan",
+                "Silahkan buka Image 1 terlebih dahulu."
+            )
+            return
+
+        if self.cv_img_2 is None:
+            messagebox.showwarning(
+                "Peringatan",
+                f"Silahkan buka Image 2 sebelum menerapkan operasi {operation}."
+            )
+            return
+
+        try:
+            img1 = self.cv_img.copy()
+            img2 = self.cv_img_2.copy()
+
+            h1, w1 = img1.shape[:2]
+            h2, w2 = img2.shape[:2]
+
+            resized_note = ""
+            if (h1, w1) != (h2, w2):
+                img2 = cv2.resize(img2, (w1, h1), interpolation=cv2.INTER_AREA)
+                resized_note = f" (Image 2 resized: {w2}×{h2} → {w1}×{h1})"
+
+            # Ensure 3-channel or 1-channel format (handle 4-channel BGRA)
+            if len(img1.shape) == 3 and img1.shape[2] == 4:
+                img1 = cv2.cvtColor(img1, cv2.COLOR_BGRA2BGR)
+            if len(img2.shape) == 3 and img2.shape[2] == 4:
+                img2 = cv2.cvtColor(img2, cv2.COLOR_BGRA2BGR)
+
+            ch1 = img1.shape[2] if len(img1.shape) == 3 else 1
+            ch2 = img2.shape[2] if len(img2.shape) == 3 else 1
+
+            if ch1 != ch2:
+                if ch1 == 1 and ch2 == 3:
+                    img1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)
+                elif ch1 == 3 and ch2 == 1:
+                    img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+
+            if img1.dtype != np.uint8:
+                img1 = np.clip(img1, 0, 255).astype(np.uint8)
+            if img2.dtype != np.uint8:
+                img2 = np.clip(img2, 0, 255).astype(np.uint8)
+
+            alpha = 0.5
+            if operation == "ADD":
+                result = cv2.add(img1, img2)
+            elif operation == "SUBTRACT":
+                result = cv2.subtract(img1, img2)
+            elif operation == "MULTIPLY":
+                # Scale by 1/255 so (255 * 255) / 255 = 255, preserving uint8 range
+                result = cv2.multiply(img1, img2, scale=1.0 / 255.0)
+            elif operation == "DIVIDE":
+                # Handle zero-valued denominator pixels safely: clamp 0 to 1 to avoid division by zero
+                img2_safe = np.where(img2 == 0, 1, img2)
+                result = cv2.divide(img1, img2_safe)
+            elif operation == "BLEND":
+                alpha = float(self.arithmetic_alpha_slider.get())
+                beta = 1.0 - alpha
+                result = cv2.addWeighted(img1, alpha, img2, beta, 0.0)
+            else:
+                messagebox.showerror(
+                    "Error",
+                    f"Operasi tidak dikenal: {operation}"
+                )
+                return
+
+            if result.dtype != np.uint8:
+                result = np.clip(result, 0, 255).astype(np.uint8)
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"Gagal melakukan operasi {operation}: {e}"
+            )
+            return
+
+        self.base_result_img = result.copy()
+        self.adjusted_img = None
+        self.result_img = result.copy()
+
+        self.brightness_slider.set(0)
+        self.contrast_slider.set(1.0)
+        self.brightness_value.configure(text="0")
+        self.contrast_value.configure(text="1.0")
+
+        self.render_label(
+            result,
+            self.lbl_result_overview
+        )
+
+        self.current_mode = f"Arithmetic: {operation}"
+        self.result_mode_label.configure(
+            text=f"Arithmetic: {operation}"
+        )
+
+        h, w = result.shape[:2]
+        info_extra = f"{operation} (α={alpha:.2f})" if operation == "BLEND" else operation
+        self.result_info_label.configure(
+            text=f"{w} × {h}  |  {info_extra}"
+        )
+
+        self.overview_status.configure(
+            text=f"Arithmetic {operation} applied.{resized_note}"
+        )
+
+        self.arithmetic_status_label.configure(
+            text=f"✔ {operation} applied",
+            text_color=GREEN
+        )
+        self.logic_status_label.configure(
+            text="Img1 ⊕ Img2 → Result",
+            text_color=TEXT_DARK
+        )
+
+        self.status_var.set(
+            f"Arithmetic Operation : {operation}{resized_note}"
+        )
+
+        self.update_action_buttons()
+        self.update_all_histograms()
+
     def convert_color(self, event=None):
         """Menerapkan transformasi warna pada citra."""
 
@@ -2759,9 +3019,7 @@ class ColorSpaceApp:
         mode = self.overview_mode_combo.get()
         self.current_mode = mode
 
-        # ======================
         # GRAYSCALE
-        # ======================
         if mode == "Grayscale":
             gray = cv2.cvtColor(
                 self.cv_img,
@@ -2772,11 +3030,9 @@ class ColorSpaceApp:
                 cv2.COLOR_GRAY2BGR
             )
 
-        # ======================
         # HSV CHANNELS
         # Audit fix: HSV tidak lagi BGR→HSV→BGR (round-trip yang tidak bermakna).
         # Sekarang menampilkan channel individual H, S, V.
-        # ======================
         elif mode == "HSV • Hue":
             hsv = cv2.cvtColor(self.cv_img, cv2.COLOR_BGR2HSV)
             hue = hsv[:, :, 0]  # Hue channel (0-179 di OpenCV)
@@ -2794,11 +3050,9 @@ class ColorSpaceApp:
             value = hsv[:, :, 2]  # Value channel (brightness)
             result = cv2.cvtColor(value, cv2.COLOR_GRAY2BGR)
 
-        # ======================
         # YCrCb CHANNELS
         # Audit fix: YCrCb tidak lagi BGR→YCrCb→BGR (round-trip).
         # Sekarang menampilkan channel individual Y, Cr, Cb.
-        # ======================
         elif mode == "YCrCb • Y (Luma)":
             ycrcb = cv2.cvtColor(self.cv_img, cv2.COLOR_BGR2YCrCb)
             y_channel = ycrcb[:, :, 0]  # Luma
@@ -2814,10 +3068,8 @@ class ColorSpaceApp:
             cb_channel = ycrcb[:, :, 2]  # Cb (blue chrominance)
             result = cv2.cvtColor(cb_channel, cv2.COLOR_GRAY2BGR)
 
-        # ======================
         # RGB CHANNEL ISOLATION
         # OpenCV BGR indexing: 0=Blue, 1=Green, 2=Red
-        # ======================
         elif mode == "Channel Red":
             result = self.cv_img.copy()
             result[:, :, 0] = 0  # Zero Blue
@@ -2836,11 +3088,9 @@ class ColorSpaceApp:
             result[:, :, 2] = 0  # Zero Red
             # Keep index 0 = Blue
 
-        # ======================
         # CIE-LAB CHANNELS
         # Audit fix: LAB tidak lagi BGR→LAB→BGR (round-trip).
         # Sekarang menampilkan channel individual L, a, b.
-        # ======================
         elif mode == "CIE-LAB • L":
             lab = cv2.cvtColor(self.cv_img, cv2.COLOR_BGR2LAB)
             l_channel = lab[:, :, 0]  # Lightness
@@ -2863,7 +3113,6 @@ class ColorSpaceApp:
         self.adjusted_img = None
         self.result_img = result.copy()
 
-        # Reset adjustment sliders after transform
         self.brightness_slider.set(0)
         self.contrast_slider.set(1.0)
         self.brightness_value.configure(text="0")
@@ -2892,9 +3141,12 @@ class ColorSpaceApp:
             text=f"{mode} transformation applied."
         )
 
-        # Reset logic status label when applying color transform
         self.logic_status_label.configure(
             text="Img1 ⊕ Img2 → Result",
+            text_color=TEXT_DARK
+        )
+        self.arithmetic_status_label.configure(
+            text="Img1 op Img2 → Result",
             text_color=TEXT_DARK
         )
 
@@ -2906,9 +3158,7 @@ class ColorSpaceApp:
 
         self.update_all_histograms()
 
-    # ==========================================
     # IMAGE RENDER
-    # ==========================================
     def render_label(
         self,
         cv_img,
@@ -2978,7 +3228,6 @@ class ColorSpaceApp:
         )
 
         target_lbl.image = img_tk
-
 
 if __name__ == "__main__":
 
